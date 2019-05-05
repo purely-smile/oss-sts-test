@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>oss sts 测试</title>
+  </head>
+  <body>
+    <h1>oss 配置</h1>
+    <textarea
+      name=""
+      id="token-data"
+      cols="300"
+      rows="20"
+      placeholder="token 数据"
+    ></textarea>
+    <h1>操作</h1>
+    <button onclick="upload()" id="upload-btn">上传</button>
+    <button onclick="list()" id="list-btn">获取列表</button>
+  </body>
+  <!-- 引入在线资源 -->
+  <script src="http://gosspublic.alicdn.com/aliyun-oss-sdk-6.1.1.min.js"></script>
+  <script>
+    const fileName = "test-sts-file";
+    // 解析token数据
+    function parseToken() {
+      const token = document.querySelector("#token-data").value;
+      if (!token) {
+        alert("请输入token");
+        return;
+      }
+      try {
+        return JSON.parse(token).data;
+      } catch (error) {
+        alert("数据格式异常");
+      }
+    }
+
+    // 上传
+    function upload() {
+      const token = parseToken();
+      const client = new window.OSS(token);
+      client.put(fileName, new Blob(["content"], { type: "text/plain" })).then(
+        result => {
+          console.log(result);
+          alert("上传成功");
+        },
+        error => {
+          console.error(error);
+          alert("上传失败");
+        }
+      );
+    }
+
+    // 列表
+    function list() {
+      const token = parseToken();
+      const client = new window.OSS(token);
+      client.list({ prefix: "/" }).then(
+        result => {
+          alert("获取成功");
+          console.log(result);
+        },
+        error => {
+          console.error(error);
+          alert("获取列表失败");
+        }
+      );
+    }
+  </script>
+</html>
